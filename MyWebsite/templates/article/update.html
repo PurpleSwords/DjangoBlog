@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    更新文章
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <br>
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">文章标题</label>
+                        {# 在value属性中指定文本框的初始值为旧的内容 #}
+                        <input type="text" class="form-control" id="title" name="title" value="{{ article.title }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="body">文章正文</label>
+                        {# 文本域不需要Value模型，直接在标签提中嵌入数据即可 #}
+                        <textarea name="body" id="body" type="text" class="form-control" rows="12">{{ article.body }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">完成</button>
+                    <a href="{% url 'article:article_detail' article.id %}" class="btn btn-primary">返回</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
