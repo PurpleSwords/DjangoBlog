@@ -12,9 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -26,7 +24,6 @@ SECRET_KEY = 'rgf*u)%pu7kxi7x4k@)ey-yw)-3&k7_=vdoe$!=4#rp&+c$14n'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -40,6 +37,8 @@ INSTALLED_APPS = [
     # 所有的APP都要在这里进行注册
     'article',
     'userprofile',
+    # 第三方库。发送邮件重置密码
+    'password_reset',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'MyWebsite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -84,7 +82,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -104,7 +101,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -118,7 +114,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -127,3 +122,16 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# 发送邮件的相关配置
+# SMTP服务，设置域名邮箱
+EMAIL_HOST = 'smtp.sina.com'
+# 邮箱地址和密码
+EMAIL_HOST_USER = '111111@sina.com'
+EMAIL_HOST_PASSWORD = '111111'
+# 端口
+EMAIL_PORT = 25
+# TLS
+EMAIL_USE_TLS = True
+# 默认发件人
+DEFAULT_FROM_EMAIL = 'Administrator <111111@sina.com>'
