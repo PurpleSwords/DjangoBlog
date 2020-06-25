@@ -8,9 +8,6 @@
         <div>
             <ul class="navbar-nav">
                 {# 条目 #}
-                <li>
-                    <a class="nav-link" href="{% url 'article:article_create' %}">写文章</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'article:article_list' %}">文章</a>
                 </li>
@@ -24,6 +21,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a href="{% url 'userprofile:edit' user.id %}" class="dropdown-item">个人信息</a>
+                            <a href="{% url 'article:article_create' %}" class="dropdown-item">写文章</a>
                             <a href="{% url 'userprofile:logout' %}" class="dropdown-item">退出登录</a>
                             <a href="#" onclick="user_delete()" class="dropdown-item">删除用户</a>
                         </div>
@@ -48,7 +46,7 @@
                         <button type="submit">发送</button>
                     </form>
                     <script>
-                        function user_delete(){
+                        function user_delete() {
                             //调用layer弹窗组件
                             layer.open({
                                 title: '确认删除',

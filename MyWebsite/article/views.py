@@ -10,10 +10,17 @@ from article.models import ArticlePost
 
 
 def article_list(request):
-    # 取出所有博客文章
-    article_lists = ArticlePost.objects.all()
-    # 每页显示9篇文章
-    paginator = Paginator(article_lists, 9)
+    # 根据GET请求中的查询条件，返回不同排序的对象数组
+    if request.GET.get('order') == 'total_views':
+        article_lists = ArticlePost.objects.all().order_by('-total_views')
+        order = 'total_views'
+    else:
+        # 取出所有博客文章(默认排序)
+        article_lists = ArticlePost.objects.all()
+        order = 'normal'
+
+    # 每页显示3篇文章
+    paginator = Paginator(article_lists, 3)
     # 获取url中的页码(通过GET的键值对参数请求:?key=value)
     page = request.GET.get('page')
     # 将导航对象相应的页码内容返回给article
@@ -21,6 +28,7 @@ def article_list(request):
     # 需要传递给模板的对象
     context = {
         'articles': articles,
+        'order': order,
     }
     return render(request, 'article/list.html', context=context)
 
