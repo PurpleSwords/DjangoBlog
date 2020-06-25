@@ -25,5 +25,5 @@ urlpatterns = [
     path('password-reset', include('password_reset.urls'))
 ]
 
-# 为杀个穿的图片配置URL路径
+# 为上传的图片配置URL路径
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
