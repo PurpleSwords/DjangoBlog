@@ -11,7 +11,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     # 电话号码字段
     phone = models.CharField(max_length=20, blank=True)
-    # 头像
+    # 头像,ImageField不存储图片，只存储图片地址
     avatar = models.ImageField(upload_to='avatar/%Y%m%d/', blank=True)
     # 个人简介
     bio = models.TextField(max_length=500, blank=True)

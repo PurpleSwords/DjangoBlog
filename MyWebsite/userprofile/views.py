@@ -106,12 +106,15 @@ def profile_edit(request, id):
         if request.user != user:
             return HttpResponse("你没有权限修改该用户信息！")
 
-        profile_form = ProfileForm(data=request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES)
         if profile_form.is_valid():
             # 取得清洗后的合法数据
             profile_cd = profile_form.cleaned_data
             profile.phone = profile_cd.get('phone')
             profile.bio = profile_cd.get('bio')
+            # 对文件的特殊处理
+            if 'avatar' in request.FILES:
+                profile.avatar = profile_cd.get('avatar')
             profile.save()
             # 带参数的redirect()
             return redirect('userprofile:edit', id=id)
