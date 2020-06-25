@@ -30,6 +30,13 @@ def article_detail(request, id):
     # 取出相应的文章
     article = ArticlePost.objects.get(id=id)
 
+    # 浏览量+1
+    article.total_views += 1
+    # 保存使用参数，只更新指定字段。
+    # 不带参数的话，会更新全部字段，包括更新时间字段（导致该字段内容错误）
+    article.save(update_fields=['total_views'])
+    # article.save()
+    print(article.updated)
     # 将markdown语法渲染成html样式
     # 欠缺：代码没有行号
     article.body = markdown.markdown(article.body, extensions=[
@@ -93,6 +100,10 @@ def article_delete(request, id):
 # 安全删除文章（只允许POST请求），需要对用户进行身份验证（未进行）
 @login_required(login_url='/userprofile/login')
 def article_safe_delete(request, id):
+    article = ArticlePost.objects.get(id=id)
+    # 过滤非法用户
+    if request.user != article.author:
+        return HttpResponse('很抱歉，您无权删除本文章')
     if request.method == 'POST':
         article = ArticlePost.objects.get(id=id)
         article.delete()
@@ -101,7 +112,7 @@ def article_safe_delete(request, id):
         return HttpResponse('非法请求！')
 
 
-# 更新文章，需要对用户进行身份验证（未进行）
+# 更新文章
 @login_required(login_url='/userprofile/login')
 def article_update(request, id):
     """
@@ -114,6 +125,10 @@ def article_update(request, id):
     """
     # 获取需要修改的具体文章的对象
     article = ArticlePost.objects.get(id=id)
+
+    # 过滤非法用户
+    if request.user != article.author:
+        return HttpResponse('很抱歉，您无权修改本文章')
     # 判断用户是否为POST提交表单数据
     if request.method == 'POST':
         # 将提交的数据赋值到表单实例中

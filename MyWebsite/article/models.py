@@ -16,6 +16,9 @@ class ArticlePost(models.Model):
     # 文章正文。大文本用TextField
     body = models.TextField()
 
+    # 文章浏览量，默认从0开始,PositiveIntegerField表示正整数
+    total_views = models.PositiveIntegerField(default=0)
+
     # 文章创建时间。default=timezone.now指定在其创建数据时默认写入当前时间
     created = models.DateTimeField(default=timezone.now)
 
