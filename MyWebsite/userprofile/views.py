@@ -4,10 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from userprofile.forms import UserLoginForm, UserRegisterForm
-
+from userprofile.forms import UserLoginForm, UserRegisterForm, ProfileForm
 
 # 用户登录
+from userprofile.models import Profile
+
+
 def user_login(request):
     if request.method == 'POST':
         user_login_form = UserLoginForm(data=request.POST)
@@ -66,6 +68,7 @@ def user_register(request):
     else:
         return HttpResponse('请使用GET/POST方式访问')
 
+
 # 删除用户（后续修改为逻辑删除）
 # @login_required是一个装饰器。装饰器可以在不改变函数内容的前提下，给这个函数添加一些功能
 # @login_required要求调用user_delete函数时，用户必须登录；
@@ -85,3 +88,47 @@ def user_delete(request, id):
             return HttpResponse('你没有删除操作的权限')
     else:
         return HttpResponse('仅接受POST请求')
+
+
+# 编辑用户信息
+@login_required(login_url='/userprofile/login/')
+def profile_edit(request, id):
+    user = User.objects.get(id=id)
+    # user_id是 OneToOneField自动生成的字段
+    # Profile已经存在就获取它，不存在则创建一个新的
+    if Profile.objects.filter(user_id=id).exists():
+        profile = Profile.objects.get(user_id=id)
+    else:
+        profile = Profile.objects.create(user=user)
+
+    if request.method == 'POST':
+        # 验证是否是本人
+        if request.user != user:
+            return HttpResponse("你没有权限修改该用户信息！")
+
+        profile_form = ProfileForm(data=request.POST)
+        if profile_form.is_valid():
+            # 取得清洗后的合法数据
+            profile_cd = profile_form.cleaned_data
+            profile.phone = profile_cd.get('phone')
+            profile.bio = profile_cd.get('bio')
+            profile.save()
+            # 带参数的redirect()
+            return redirect('userprofile:edit', id=id)
+        else:
+            return HttpResponse('注册表单输入有误，请重新输入')
+
+    elif request.method == 'GET':
+        profile_form = ProfileForm()
+        '''
+        实际上GET方法中不需要将profile_form这个表单对象传递到模板中去，
+        因为模板中已经用Bootstrap写好了表单，所以profile_form并没有用到
+        '''
+        context = {
+            'profile_form': profile_form,
+            'profile': profile,
+            'user': user,
+        }
+        return render(request, 'userprofile/edit.html', context)
+    else:
+        return HttpResponse("请使用GET/POST请求")

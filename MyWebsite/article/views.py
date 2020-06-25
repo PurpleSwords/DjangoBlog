@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -40,6 +41,8 @@ def article_detail(request, id):
 
 
 # 写文章的视图
+# 检查登录
+@login_required(login_url='/userprofile/login/')
 def articled_create(request):
     # 判断用户是否提交数据
     if request.method == 'POST':
@@ -49,10 +52,8 @@ def articled_create(request):
         if article_post_form.is_valid():
             # 保存数据，但暂时不提交到数据库中
             new_article = article_post_form.save(commit=False)
-            # 指定数据库中id=1的用户为作者
-            # 如果进行过删除数据表的操作，可能会找不到id=1的用户
-            # 此时请重新创建用户，并传入此用户的id
-            new_article.author = User.objects.get(id=1)
+            # 指定作者为当前登录用户
+            new_article.author = User.objects.get(id=request.user.id)
             # 将新文章保存在数据库中
             new_article.save()
             # 完成后返回文章列表
@@ -72,7 +73,8 @@ def articled_create(request):
         return render(request, 'article/create.html', context)
 
 
-# 删文章
+# 删文章，需要对用户进行身份验证（未进行）
+@login_required(login_url='/userprofile/login')
 def article_delete(request, id):
     # 根据id获取需要删除的文章
     article = ArticlePost.objects.get(id=id)
@@ -81,7 +83,8 @@ def article_delete(request, id):
     return redirect('article:article_list')
 
 
-# 安全删除文章
+# 安全删除文章（只允许POST请求），需要对用户进行身份验证（未进行）
+@login_required(login_url='/userprofile/login')
 def article_safe_delete(request, id):
     if request.method == 'POST':
         article = ArticlePost.objects.get(id=id)
@@ -91,7 +94,8 @@ def article_safe_delete(request, id):
         return HttpResponse('非法请求！')
 
 
-# 更新文章
+# 更新文章，需要对用户进行身份验证（未进行）
+@login_required(login_url='/userprofile/login')
 def article_update(request, id):
     """
     更新文章的视图函数
