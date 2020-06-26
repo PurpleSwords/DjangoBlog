@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # 所有的APP都要在这里进行注册
     'article',
     'userprofile',
+    'comment',
     # 第三方库。发送邮件重置密码
     'password_reset',
 ]
@@ -106,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

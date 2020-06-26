@@ -8,6 +8,7 @@ import markdown
 
 from article.forms import ArticlePostForm
 from article.models import ArticlePost
+from comment.models import Comment
 
 
 def article_list(request):
@@ -55,7 +56,10 @@ def article_detail(request, id):
     # 不带参数的话，会更新全部字段，包括更新时间字段（导致该字段内容错误）
     article.save(update_fields=['total_views'])
     # article.save()
-    print(article.updated)
+
+    # 取出文章评论
+    comments = Comment.objects.filter(article=id)
+
     # 将markdown语法渲染成html样式
     # 欠缺：代码没有行号
     md = markdown.Markdown(
@@ -73,7 +77,8 @@ def article_detail(request, id):
     # 需要传递给模板的对象
     context = {
         'article': article,
-        'toc': md.toc
+        'toc': md.toc,
+        'comments':comments,
     }
     # 载入模板，并返回context对象
     return render(request, 'article/detail.html', context)

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-
 # 博客文章数据模型
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -37,3 +37,9 @@ class ArticlePost(models.Model):
     def __str__(self):
         # 返回文章标题
         return self.title
+
+    # 获取文章地址
+    def get_absolute_url(self):
+        # reverse:url反转，动态生成url
+        # kwargs可以传递字典形式的参数
+        return reverse('article:article_detail', args=[self.id])

@@ -22,7 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('article/', include(('article.urls', 'article'), namespace='article')),
     path('userprofile/', include(('userprofile.urls', 'userprofile'), namespace='userprofile')),
-    path('password-reset', include('password_reset.urls'))
+    path('password-reset', include('password_reset.urls')),
+    path('comment/', include(('comment.urls', 'comment'), namespace='comment')),
 ]
 
 # 为上传的图片配置URL路径
