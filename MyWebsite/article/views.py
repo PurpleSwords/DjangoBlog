@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 import markdown
@@ -10,15 +11,24 @@ from article.models import ArticlePost
 
 
 def article_list(request):
-    # 根据GET请求中的查询条件，返回不同排序的对象数组
-    if request.GET.get('order') == 'total_views':
-        article_lists = ArticlePost.objects.all().order_by('-total_views')
-        order = 'total_views'
-    else:
-        # 取出所有博客文章(默认排序)
-        article_lists = ArticlePost.objects.all()
-        order = 'normal'
+    search = request.GET.get('search')
+    order = request.GET.get('order')
 
+    if search:
+        # 根据GET请求中的查询条件，返回不同排序的对象数组
+        if order == 'total_views':
+            article_lists = ArticlePost.objects.filter(Q(title__icontains=search) | Q(body__icontains=search)) \
+                .order_by('-total_views')
+        else:
+            # 取出所有博客文章(默认排序)
+            article_lists = ArticlePost.objects.filter(Q(title__icontains=search) | Q(body__icontains=search))
+    else:
+        # 将search参数置空
+        search = ''
+        if order == 'total_views':
+            article_lists = ArticlePost.objects.all().order_by('-total_views')
+        else:
+            article_lists = ArticlePost.objects.all()
     # 每页显示3篇文章
     paginator = Paginator(article_lists, 3)
     # 获取url中的页码(通过GET的键值对参数请求:?key=value)
@@ -29,6 +39,7 @@ def article_list(request):
     context = {
         'articles': articles,
         'order': order,
+        'search': search,
     }
     return render(request, 'article/list.html', context=context)
 
