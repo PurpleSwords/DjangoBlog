@@ -1,4 +1,4 @@
-Django==2.2.21
+Django==2.2.24
 django-password-reset==2.0
 form==0.0.1
 importlib-metadata==1.6.0
